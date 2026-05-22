@@ -80,6 +80,8 @@ a {
   margin: var(--hero-logo-inset) 0 0 var(--hero-logo-inset);
   width: clamp(160px, 36vw, 480px);
   flex-shrink: 0;
+  font-size: 0;
+  line-height: 0;
 }
 
 .hero__logo img {
@@ -167,9 +169,19 @@ a {
 }
 
 .lang-switcher__flag {
-  font-size: 22px;
-  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
+}
+
+.lang-switcher__flag img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .lang-switcher__code {
@@ -299,6 +311,38 @@ a {
   border: 0;
 }
 
+.trailer-frame__fallback {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.trailer-frame__fallback img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.trailer-frame__play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 68px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(255, 0, 0, 0.88);
+  color: #fff;
+  font-size: 22px;
+  line-height: 48px;
+  text-align: center;
+  padding-left: 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
 .faq {
   display: grid;
   gap: 12px;
@@ -315,10 +359,51 @@ a {
   font-size: 17px;
 }
 
+.faq--accordion .faq__question {
+  margin: 0;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  transition: color 0.2s ease;
+}
+
+.faq--accordion .faq__question:hover {
+  color: #fff;
+}
+
+.faq--accordion .faq__question::after {
+  content: "";
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  margin-top: 6px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+  opacity: 0.7;
+}
+
+.faq--accordion .faq__item--open .faq__question::after {
+  transform: rotate(-135deg);
+  margin-top: 10px;
+}
+
 .faq__answer {
   margin: 0;
   color: var(--text-soft);
   line-height: 1.6;
+}
+
+.faq--accordion .faq__item:not(.faq__item--open) .faq__answer {
+  display: none;
+}
+
+.faq--accordion .faq__answer {
+  padding-top: 10px;
 }
 
 .end-visual {
@@ -808,8 +893,8 @@ a.related-games__link:hover {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 62px;
-  height: 62px;
+  width: 31px;
+  height: 31px;
   border: none;
   background: transparent;
   cursor: pointer;
@@ -825,30 +910,19 @@ a.related-games__link:hover {
 }
 
 .carousel__nav img {
-  display: none;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .carousel__nav::after {
-  content: "\203A";
-  position: relative;
-  z-index: 1;
-  color: #fff;
-  font-size: 34px;
-  line-height: 1;
-  font-weight: 700;
-}
-
-.carousel__nav--prev::after {
-  content: "\2039";
-  transform: translateX(-1px);
+  content: none;
+  display: none;
 }
 
 .carousel__nav--prev {
   left: 8px;
-}
-
-.carousel__nav--next::after {
-  transform: translateX(1px);
 }
 
 .carousel__nav--next {
@@ -876,15 +950,13 @@ a.related-games__link:hover {
 }
 
 .carousel--style-b .carousel__nav {
-  width: 92px;
-  height: 92px;
+  width: 46px;
+  height: 46px;
 }
 
 .carousel--style-b .carousel__nav::after {
-  font-size: 76px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.94);
-  text-shadow: 0 0 14px rgba(253, 83, 131, 0.32);
+  content: none;
+  display: none;
 }
 
 .carousel--style-b .carousel__pagination {
@@ -903,6 +975,11 @@ a.related-games__link:hover {
 }
 
 @media (max-width: 900px) {
+  .hero {
+    overflow: visible;
+    min-height: 44vh;
+  }
+
   .hero__content {
     padding-bottom: clamp(20px, 6vh, 52px);
   }
@@ -941,28 +1018,174 @@ a.related-games__link:hover {
     gap: 10px;
   }
 
+  .end-visual-combo__top {
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .end-visual-combo__game {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  .end-visual-combo__meta {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .related-games--in-combo {
+    flex: none;
+    width: 100%;
+    justify-content: center;
+  }
+
   .related-games__list {
-    gap: 6px;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
   }
 
   .related-games__link {
-    font-size: 13px;
-    padding: 6px 12px 6px 6px;
+    width: min(100%, 320px);
+    justify-content: center;
   }
 
-  .related-games__icon {
-    width: 32px;
-    height: 32px;
+  .steam-cta--end {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .lang-switcher {
+    flex-direction: column;
+    align-items: flex-end;
+    top: 12px;
+    right: 12px;
+    z-index: 50;
+    max-width: calc(100vw - 24px);
+  }
+
+  .lang-switcher__menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding: 10px;
+    border-radius: 16px;
+    max-width: min(240px, calc(100vw - 24px));
+    max-height: min(70vh, 420px);
+    overflow-y: auto;
+    transform: translateY(-8px);
+  }
+
+  .lang-switcher--open .lang-switcher__menu {
+    transform: translateY(0);
+  }
+
+  .lang-switcher__link {
+    justify-content: flex-start;
+    width: 100%;
+    white-space: nowrap;
+  }
+
+  .steam-cta__wishlist {
+    width: min(272px, 74vw);
+    gap: 8px;
+    padding: 0 12px;
+  }
+
+  .steam-cta__wishlist-icon {
+    width: 26px;
+  }
+
+  .steam-cta__wishlist-text {
+    flex: 1 1 auto;
+    max-width: none;
+    font-size: 15px;
+  }
+
+  .steam-cta--hero .steam-cta__wishlist {
+    width: min(288px, 78vw);
+    gap: 8px;
+    padding: 0 14px;
+  }
+
+  .steam-cta--hero .steam-cta__wishlist-icon {
+    width: 28px;
+  }
+
+  .steam-cta--hero .steam-cta__wishlist-text {
+    font-size: 16px;
+  }
+
+  html[lang="ko"] .steam-cta__wishlist-text,
+  html[lang="ko"] .steam-cta--hero .steam-cta__wishlist-text {
+    font-size: 16px;
+  }
+
+  html[lang="fr"] .steam-cta__wishlist-text,
+  html[lang="fr"] .steam-cta--hero .steam-cta__wishlist-text {
+    font-size: 14px;
+  }
+
+  html[lang="es"] .steam-cta__wishlist,
+  html[lang="ja"] .steam-cta__wishlist,
+  html[lang="es"] .steam-cta--hero .steam-cta__wishlist,
+  html[lang="ja"] .steam-cta--hero .steam-cta__wishlist {
+    width: min(292px, 80vw);
+    gap: 6px;
+    padding: 0 10px;
+  }
+
+  html[lang="es"] .steam-cta__wishlist-text,
+  html[lang="ja"] .steam-cta__wishlist-text {
+    font-size: 13px;
+  }
+
+  html[lang="es"] .steam-cta--hero .steam-cta__wishlist-text,
+  html[lang="ja"] .steam-cta--hero .steam-cta__wishlist-text {
+    font-size: 14px;
+  }
+
+  html[lang="de"] .steam-cta__wishlist-text,
+  html[lang="ru"] .steam-cta__wishlist-text,
+  html[lang="de"] .steam-cta--hero .steam-cta__wishlist-text,
+  html[lang="ru"] .steam-cta--hero .steam-cta__wishlist-text {
+    font-size: 14px;
+  }
+
+  .end-visual.end-visual--c {
+    aspect-ratio: auto;
+    min-height: clamp(260px, 58vw, 420px);
+    background-size: cover;
+    background-position: center center;
+  }
+
+  .end-visual-combo__info {
+    position: static;
+    margin: 0;
+    padding: clamp(16px, 4vw, 20px);
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
   }
 }
 
 @media (max-width: 640px) {
   .hero {
-    --hero-logo-inset: clamp(16px, 4vw, 32px);
+    --hero-logo-inset: clamp(12px, 3vw, 24px);
+    min-height: clamp(240px, 36vh, 320px);
+    padding: 12px 12px 16px;
   }
 
   .hero__content {
-    padding-bottom: clamp(16px, 5vh, 40px);
+    padding-bottom: clamp(10px, 2.5vh, 20px);
   }
 
   .section-play__btn,
@@ -978,9 +1201,65 @@ a.related-games__link:hover {
     width: min(260px, 88vw);
   }
 
-  .hero {
-    min-height: 48vh;
-    padding: 20px 12px 24px;
+  .hero__logo {
+    width: clamp(120px, 38vw, 200px);
+    margin-top: clamp(40px, 10vw, 52px);
+  }
+
+  .hero__logo img {
+    max-height: clamp(68px, 12vh, 110px);
+  }
+
+  .lang-switcher__toggle {
+    font-size: 13px;
+    padding: 7px 12px;
+    gap: 6px;
+  }
+
+  .lang-switcher__flag {
+    width: 20px;
+    height: 20px;
+  }
+
+  .lang-switcher__link {
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+
+  .steam-cta__wishlist {
+    width: min(248px, 72vw);
+    padding: 0 10px;
+    gap: 6px;
+  }
+
+  .steam-cta__wishlist-icon {
+    width: 24px;
+  }
+
+  .steam-cta__wishlist-text {
+    font-size: 14px;
+  }
+
+  .steam-cta--hero .steam-cta__wishlist {
+    width: min(260px, 76vw);
+  }
+
+  .steam-cta--hero .steam-cta__wishlist-icon {
+    width: 26px;
+  }
+
+  .steam-cta--hero .steam-cta__wishlist-text {
+    font-size: 15px;
+  }
+
+  html[lang="es"] .steam-cta__wishlist,
+  html[lang="ja"] .steam-cta__wishlist {
+    width: min(268px, 78vw);
+  }
+
+  html[lang="es"] .steam-cta--hero .steam-cta__wishlist,
+  html[lang="ja"] .steam-cta--hero .steam-cta__wishlist {
+    width: min(276px, 80vw);
   }
 
   .content-section,
@@ -1004,21 +1283,13 @@ a.related-games__link:hover {
   }
 
   .carousel__nav {
-    width: 52px;
-    height: 52px;
-  }
-
-  .carousel__nav::after {
-    font-size: 24px;
-  }
-
-  .carousel--style-b .carousel__nav::after {
-    font-size: 54px;
+    width: 26px;
+    height: 26px;
   }
 
   .carousel--style-b .carousel__nav {
-    width: 72px;
-    height: 72px;
+    width: 36px;
+    height: 36px;
   }
 
   .carousel--style-b .carousel__dot {
@@ -1030,11 +1301,48 @@ a.related-games__link:hover {
     padding-left: 16px;
     padding-right: 16px;
   }
+
+  .end-visual.end-visual--c {
+    min-height: clamp(280px, 72vw, 400px);
+  }
+
+  .end-visual-combo__icon {
+    width: 72px;
+    height: 72px;
+  }
+
+  .end-visual-combo__name {
+    font-size: 20px;
+  }
+
+  .end-visual-combo__sub {
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .related-games__link {
+    font-size: 13px;
+    padding: 8px 14px 8px 8px;
+  }
+
+  .related-games__icon {
+    width: 32px;
+    height: 32px;
+  }
 }
 
 @media (max-width: 480px) {
+  .hero {
+    min-height: clamp(220px, 32vh, 280px);
+  }
+
   .hero__logo {
-    width: clamp(145px, 44vw, 260px);
+    width: clamp(110px, 36vw, 180px);
+    margin-top: clamp(36px, 9vw, 48px);
+  }
+
+  .hero__logo img {
+    max-height: clamp(60px, 11vh, 96px);
   }
 
   .hero__play-btn {
@@ -1050,9 +1358,17 @@ a.related-games__link:hover {
     width: min(240px, 86vw);
   }
 
+  .steam-cta__wishlist {
+    width: min(232px, 70vw);
+  }
+
+  .steam-cta--hero .steam-cta__wishlist {
+    width: min(244px, 74vw);
+  }
+
   .carousel--style-b .carousel__nav {
-    width: 60px;
-    height: 60px;
+    width: 30px;
+    height: 30px;
   }
 
   .carousel--style-b .carousel__nav--prev {
@@ -1063,10 +1379,6 @@ a.related-games__link:hover {
     right: 2px;
   }
 
-  .carousel--style-b .carousel__nav::after {
-    font-size: 44px;
-  }
-
   .carousel--style-b .carousel__pagination {
     gap: 8px;
     margin-top: 10px;
@@ -1075,5 +1387,9 @@ a.related-games__link:hover {
   .carousel--style-b .carousel__dot {
     width: 24px;
     height: 5px;
+  }
+
+  .end-visual.end-visual--c {
+    min-height: clamp(300px, 85vw, 440px);
   }
 }

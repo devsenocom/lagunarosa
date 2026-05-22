@@ -6,6 +6,9 @@
   var counterId = script && script.getAttribute('data-counter-id');
   if (!counterId || counterId === 'YOUR_COUNTER_ID') return;
 
+  counterId = parseInt(counterId, 10);
+  if (!counterId) return;
+
   window.dataLayer = window.dataLayer || [];
 
   (function(m, e, t, r, i, k, a) {

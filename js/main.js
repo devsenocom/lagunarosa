@@ -203,8 +203,12 @@ class Carousel {
 }
 
 /** Set your Steam App ID when the store page is live (digits only). */
-const STEAM_APP_ID = '';
-const DEFAULT_STEAM_UTM = { utm_source: 'seo_main' };
+const STEAM_APP_ID = '4450390';
+const DEFAULT_STEAM_UTM = {
+  utm_source: 'seo_main',
+  utm_medium: 'lr',
+  utm_content: 'ws',
+};
 
 const STEAM_LANG = {
   en: 'english',
@@ -252,20 +256,26 @@ const LANG_BY_FILE = {
 };
 
 const LANG_LABELS = {
-  en: { flag: '🇬🇧', code: 'EN' },
-  de: { flag: '🇩🇪', code: 'DE' },
-  fr: { flag: '🇫🇷', code: 'FR' },
-  es: { flag: '🇪🇸', code: 'ES' },
-  jp: { flag: '🇯🇵', code: 'JP' },
-  ko: { flag: '🇰🇷', code: 'KR' },
-  ru: { flag: '🇷🇺', code: 'RU' },
+  en: { flagImg: 'assets/common/f-en.png', code: 'EN' },
+  de: { flagImg: 'assets/common/f-de.png', code: 'DE' },
+  fr: { flagImg: 'assets/common/f-fr.png', code: 'FR' },
+  es: { flagImg: 'assets/common/f-es.png', code: 'ES' },
+  jp: { flagImg: 'assets/common/f-jp.png', code: 'JP' },
+  ko: { flagImg: 'assets/common/f-kr.png', code: 'KR' },
+  ru: { flagImg: 'assets/common/f-ru.png', code: 'RU' },
 };
+
+function renderFlagHtml(langCode) {
+  const label = LANG_LABELS[langCode];
+  if (!label?.flagImg) return '';
+  return `<img src="${label.flagImg}" alt="" width="24" height="24">`;
+}
 
 function renderLangLabel(container, langCode) {
   const label = LANG_LABELS[langCode];
   if (!label || !container) return;
   container.innerHTML =
-    `<span class="lang-switcher__flag" aria-hidden="true">${label.flag}</span>` +
+    `<span class="lang-switcher__flag" aria-hidden="true">${renderFlagHtml(langCode)}</span>` +
     `<span class="lang-switcher__code">${label.code}</span>`;
 }
 
@@ -346,6 +356,65 @@ function initSteamLinksAndUtm() {
   });
 }
 
+function initYoutubeEmbeds() {
+  document.querySelectorAll('.trailer-frame__inner iframe[src*="youtube.com/embed/"]').forEach((iframe) => {
+    const src = iframe.getAttribute('src') || '';
+    const match = src.match(/embed\/([^?&/]+)/);
+    if (!match) return;
+
+    const videoId = match[1];
+    const container = iframe.closest('.trailer-frame__inner');
+    if (!container) return;
+
+    if (window.location.protocol === 'file:') {
+      container.innerHTML =
+        `<a class="trailer-frame__fallback" href="https://www.youtube.com/watch?v=${videoId}" target="_blank" rel="noopener noreferrer">` +
+        `<img src="https://i.ytimg.com/vi/${videoId}/hqdefault.jpg" alt="">` +
+        `<span class="trailer-frame__play" aria-hidden="true">&#9654;</span></a>`;
+      return;
+    }
+
+    const url = new URL(`https://www.youtube.com/embed/${videoId}`);
+    url.searchParams.set('rel', '0');
+    url.searchParams.set('modestbranding', '1');
+    if (window.location.origin && window.location.origin !== 'null') {
+      url.searchParams.set('origin', window.location.origin);
+    }
+
+    iframe.setAttribute('src', url.toString());
+    iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+    iframe.setAttribute('loading', 'lazy');
+  });
+}
+
+function initFaq() {
+  document.querySelectorAll('.faq').forEach((faq) => {
+    faq.classList.add('faq--accordion');
+
+    faq.querySelectorAll('.faq__item').forEach((item) => {
+      const question = item.querySelector('.faq__question');
+      if (!question) return;
+
+      question.setAttribute('tabindex', '0');
+      question.setAttribute('role', 'button');
+      question.setAttribute('aria-expanded', 'false');
+
+      const toggle = () => {
+        const isOpen = item.classList.toggle('faq__item--open');
+        question.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      };
+
+      question.addEventListener('click', toggle);
+      question.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggle();
+        }
+      });
+    });
+  });
+}
+
 function initSectionNav() {
   const nav = document.getElementById('section-nav');
   if (!nav) return;
@@ -399,4 +468,6 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   initSectionNav();
+  initFaq();
+  initYoutubeEmbeds();
 });
